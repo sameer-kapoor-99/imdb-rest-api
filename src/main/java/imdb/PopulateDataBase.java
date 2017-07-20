@@ -14,22 +14,19 @@ import java.util.zip.GZIPInputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
-
+//Rest controller to that pulls data from Imdb's S3 storage and populates the MovieRepository
 @RestController
 public class PopulateDataBase {
 	
@@ -42,9 +39,6 @@ public class PopulateDataBase {
 	@Autowired
 	private MongoOperations mongoOperations;
 	
-	@Autowired
-	private MongoTemplate mongoTemplate;
-
 	@RequestMapping("/populateDB")
 	public void run(String...args) throws Exception {
 		castRepo.deleteAll();
@@ -63,10 +57,10 @@ public class PopulateDataBase {
 		
 
 	}
-	
+
+	//Method to download required data from Imdb's S3 storage
 	public void downloadS3Files() throws IOException {
         AmazonS3 s3 = new AmazonS3Client();
-        //Region usWest2 = Region.getRegion(Regions.US_WEST_2);
 
         String bucketName = "imdb-datasets";
         
@@ -99,6 +93,7 @@ public class PopulateDataBase {
         }
 	}
 	
+	//Method to store the nconst<->cast member name map
 	public void buildCastMap(String csvFile) {
 
 		try{
@@ -117,6 +112,7 @@ public class PopulateDataBase {
 		}
 	}
 	
+	//Method to create the imdbId<->movie title map
 	public void buildTitleMap(String titleFile) {
 		String line;
 		
@@ -149,6 +145,8 @@ public class PopulateDataBase {
 	    }
 	}
 	
+	//Method to build the imdbId<->cast list map
+	//This method pull data from the cast repository to build the cast list
 	public void buildMovieCastMap(String principalFile) {
 		String line;
 		
@@ -199,6 +197,7 @@ public class PopulateDataBase {
 	    }
 	}
 	
+	//Method to build the imdbId<->movie rating map
 	public void buildRatingMap(String ratingFile) {
 		String line;
 		

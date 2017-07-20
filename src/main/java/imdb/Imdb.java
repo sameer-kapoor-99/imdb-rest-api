@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-
+import org.springframework.data.mongodb.core.mapping.Document;
+//Imdb class containing movie name, imdb id, cast list and imdb rating
+//This class is stored as a document in the database
+@Document
 public class Imdb {
 	@Id private String id;
 	
-	@Indexed
+	@Indexed(unique=true)
 	private String imdbId;
 	
 	@Indexed
