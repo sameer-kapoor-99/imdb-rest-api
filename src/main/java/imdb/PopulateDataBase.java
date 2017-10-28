@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amazonaws.AmazonServiceException;
@@ -46,6 +47,7 @@ public class PopulateDataBase {
 		//mongoTemplate.getDb().dropDatabase();
 		
 
+		message("Downloading Imdb S3 files");
 		downloadS3Files();
 		
 		buildCastMap("name.basics.tsv.gz");
@@ -56,6 +58,11 @@ public class PopulateDataBase {
 		System.out.println("Finished building movie database");
 		
 
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public String message(String msg) {
+		return msg;
 	}
 
 	//Method to download required data from Imdb's S3 storage
@@ -82,13 +89,10 @@ public class PopulateDataBase {
 				fos.close();
 			} catch (AmazonServiceException e) {
 				System.err.println(e.getErrorMessage());
-				System.exit(1);
 			} catch (FileNotFoundException e) {
 				System.err.println(e.getMessage());
-				System.exit(1);
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
-				System.exit(1);
 			}
         }
 	}
